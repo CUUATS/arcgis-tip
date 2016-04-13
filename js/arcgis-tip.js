@@ -161,6 +161,9 @@ require([
               initComplete: function () {
                 var api = this.api(),
                   table = api.table().node(),
+                  filters = $('<div id="tip-advanced-filters"></div>')
+                    .insertBefore(table)
+                    .hide(),
                   filterIds = [];
 
                 $.each(columns, function(i, colDef) {
@@ -169,7 +172,7 @@ require([
 
                     var column = api.column(colDef.name + ':name'),
                       wrapper = $('<div class="tip-filter"></div>')
-                        .insertBefore(table),
+                        .appendTo(filters),
                       label = $('<label></label>')
                         .attr('for', colDef.name)
                         .text(colDef.title + ':')
@@ -200,11 +203,21 @@ require([
                   .text('Reset filters')
                   .attr('aria-controls', filterIds.join(' '))
                   .attr('href', '#')
-                  .addClass('dt-button', 'tip-filter-reset')
-                  .insertBefore(table)
+                  .addClass('dt-button tip-filter-reset')
+                  .appendTo(filters)
                   .click(function(e) {
                     e.preventDefault();
                     $('.tip-filter select').val('').change();
+                  });
+
+                $('<a></a>')
+                  .text('Advanced filters')
+                  .attr('href', '#')
+                  .addClass('dt-button tip-filter-toggle')
+                  .insertBefore(filters)
+                  .click(function(e) {
+                    e.preventDefault();
+                    filters.slideToggle(200);
                   });
               }
             });

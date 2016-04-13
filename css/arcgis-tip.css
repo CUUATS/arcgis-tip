@@ -7,8 +7,27 @@
   margin-top: 1em;
 }
 
+#tip-advanced-filters {
+  background-color: #eeeeee;
+  clear: both;
+  padding: 1em;
+}
+
+.tip-filter {
+  display: inline-block;
+  margin: 0 1em 1em 0;
+}
+
 .tip-filter label {
   margin-right: 0.5em;
+}
+
+.tip-filter-reset {
+  vertical-align: middle;
+}
+
+div.dt-button-collection {
+  width: 15em;
 }
 
 /* Disable DataTables styles that conflict with Tablepress styles. */
