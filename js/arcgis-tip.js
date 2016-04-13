@@ -60,7 +60,8 @@ require([
             {
               name: 'AllAgencies',
               title: 'All Agencies',
-              filter: true
+              filter: true,
+              multiValue: true
             },
             {
               name: 'FundType',
@@ -124,7 +125,20 @@ require([
               filter: true
             }
           ],
-          displayResults = function () {
+          splitChoices = function(choices, sep=',') {
+            results = [];
+            $.each(choices, function(i, value) {
+              $.each(value.split(sep), function(i, part) {
+                var part = $.trim(part);
+                if (results.indexOf(part) == -1) {
+                  results.push(part);
+                }
+              });
+            });
+            results.sort();
+            return results;
+          },
+          displayResults = function() {
             var rows = [];
             $.each(featureSets, function (i, featureSet) {
               $.each(featureSet.features, function (i, feature) {
@@ -146,12 +160,13 @@ require([
               ],
               initComplete: function () {
                 var api = this.api(),
-                  table = api.table().node();
+                  table = api.table().node(),
+                  filterIds = [];
 
-                console.log(table);
                 $.each(columns, function(i, colDef) {
                   if (colDef.filter) {
-                    console.log(colDef.name);
+                    filterIds.push(colDef.name);
+
                     var column = api.column(colDef.name + ':name'),
                       wrapper = $('<div class="tip-filter"></div>')
                         .insertBefore(table),
@@ -165,16 +180,32 @@ require([
                         .append('<option value=""></option>')
                         .appendTo(wrapper)
                         .on('change', function () {
-                            var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                            column.search( val ? '^'+val+'$' : '', true, false ).draw();
-                        });
+                            var val = $.fn.dataTable.util.escapeRegex($(this).val()),
+                              regex = colDef.multiValue ? '(^|,|\\s)' + val + '(\\s|,|$)' : '^' + val + '$';
+                            column.search(val ? regex : '', true, false).draw();
+                        }),
+                      allValues = column.data().unique().sort(),
+                      choices = colDef.multiValue ? splitChoices(allValues) : allValues;
 
-                  column.data().unique().sort().each( function (d, j) {
-                    select.append('<option value="'+d+'">'+d+'</option>')
-                  });
+                    $.each(choices, function (i, choice) {
+                      $('<option></option>')
+                        .text(choice)
+                        .attr('value', choice)
+                        .appendTo(select);
+                    });
                   }
                 });
 
+                $('<a></a>')
+                  .text('Reset filters')
+                  .attr('aria-controls', filterIds.join(' '))
+                  .attr('href', '#')
+                  .addClass('dt-button', 'tip-filter-reset')
+                  .insertBefore(table)
+                  .click(function(e) {
+                    e.preventDefault();
+                    $('.tip-filter select').val('').change();
+                  });
               }
             });
           },

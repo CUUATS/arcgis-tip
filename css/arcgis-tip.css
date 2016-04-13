@@ -7,6 +7,10 @@
   margin-top: 1em;
 }
 
+.tip-filter label {
+  margin-right: 0.5em;
+}
+
 /* Disable DataTables styles that conflict with Tablepress styles. */
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
