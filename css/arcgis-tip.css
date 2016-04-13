@@ -3,6 +3,10 @@
   width: 100%;
 }
 
+#tip-table_wrapper {
+  margin-top: 1em;
+}
+
 /* Disable DataTables styles that conflict with Tablepress styles. */
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
