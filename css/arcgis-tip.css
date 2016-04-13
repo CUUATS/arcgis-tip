@@ -30,6 +30,14 @@ div.dt-button-collection {
   width: 15em;
 }
 
+#tip-table tr td {
+  border-left: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+#tip-table tr td:last-child {
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+
 /* Disable DataTables styles that conflict with Tablepress styles. */
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
