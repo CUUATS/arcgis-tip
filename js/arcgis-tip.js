@@ -156,11 +156,12 @@ require([
               info: false,
               columns: columns,
               buttons: [
-                'colvis'
+                'colvis', 'copy', 'csv', 'excel', 'pdf', 'print'
               ],
               initComplete: function () {
                 var api = this.api(),
                   table = api.table().node(),
+                  buttons = api.buttons().container(),
                   filters = $('<div id="tip-advanced-filters"></div>')
                     .insertBefore(table)
                     .hide(),
@@ -214,7 +215,7 @@ require([
                   .text('Advanced filters')
                   .attr('href', '#')
                   .addClass('dt-button tip-filter-toggle')
-                  .insertBefore(filters)
+                  .prependTo(buttons)
                   .click(function(e) {
                     e.preventDefault();
                     filters.slideToggle(200);
