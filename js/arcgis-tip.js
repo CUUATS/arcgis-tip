@@ -71,30 +71,35 @@ require([
               name: 'FederalFunding',
               title: 'Federal Funding',
               render: formatCurrency,
-              visible: false
+              visible: false,
+              pdfWidth: 40
             },
             {
               name: 'StateFunding',
               title: 'State Funding',
               render: formatCurrency,
-              visible: false
+              visible: false,
+              pdfWidth: 40
             },
             {
               name: 'LeadAgencyFunding',
               title: 'Lead Agency Funding',
               render: formatCurrency,
-              visible: false
+              visible: false,
+              pdfWidth: 40
             },
             {
               name: 'OtherAgencyFunding',
               title: 'Other Agency Funding',
               render: formatCurrency,
-              visible: false
+              visible: false,
+              pdfWidth: 40
             },
             {
               name: 'TotalCost',
               title: 'Total Cost',
-              render: formatCurrency
+              render: formatCurrency,
+              pdfWidth: 40
             },
             {
               name: 'Description',
@@ -156,7 +161,53 @@ require([
               info: false,
               columns: columns,
               buttons: [
-                'colvis', 'copy', 'csv', 'excel', 'pdf', 'print'
+                'colvis', 'copy', 'csv', 'excel', {
+                  extend: 'pdfHtml5',
+                  text: 'PDF/Print',
+                  orientation: 'landscape',
+                  pageSize: 'LETTER',
+                  title: 'Transportation Improvement Program',
+                  message: 'Updated February 25, 2016',
+                  exportOptions: {
+                    columns: ':visible'
+                  },
+                  customize: function (doc) {
+                    // Page setup
+                    doc.pageMargins = [40, 40, 40, 40];
+
+                    // Styles
+                    doc.styles.tableHeader = {
+                      alignment: 'left',
+                      bold: true,
+                      fontSize: 8,
+                      color: 'white',
+                      fillColor: 'black'
+                    };
+
+                    doc.styles.title = {
+                      alignment: 'center',
+                      bold: true,
+                      fontSize: 12
+                    };
+
+                    doc.styles.message = {
+                      alignment: 'center',
+                      fontSize: 10
+                    };
+
+                    doc.styles.tableBodyEven.fontSize = 8;
+                    doc.styles.tableBodyOdd.fontSize = 8;
+
+                    // Content
+                    doc.content[0].margin = [0, 0, 0, 6];
+                    var colWidths = [];
+                    $('#tip-table').dataTable().api().columns(':visible').every(function(idx) {
+                      var col = columns[idx];
+                      colWidths.push(col.pdfWidth ? col.pdfWidth : 'auto');
+                    });
+                    doc.content[2].table.widths = colWidths;
+                  }
+                }
               ],
               initComplete: function () {
                 var api = this.api(),
