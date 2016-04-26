@@ -21,7 +21,7 @@ require([
             basemap: "topo"
           }),
           dmsLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL, {
-            "opacity" : 0.5
+            "opacity" : 1.0
           }),
           formatCurrency = function (value) {
             if (value !== null) {
