@@ -131,8 +131,9 @@ require([
               filter: true
             }
           ],
-          splitChoices = function(choices, sep=',') {
-            results = [];
+          splitChoices = function(choices, sep) {
+            if (typeof(sep) === 'undefined') sep = ',';
+            var results = [];
             $.each(choices, function(i, value) {
               $.each(value.split(sep), function(i, part) {
                 var part = $.trim(part);
