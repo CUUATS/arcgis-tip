@@ -9,6 +9,7 @@ require([
     $(function () {
       $('.arcgis-tip').each(function () {
         var mapServiceURL = $(this).data('service'),
+          tipVersion = $(this).data('version'),
           layerQuery = "(FiscalYear >= 2017 AND FiscalYear <= 2020) OR AdvancedConstruction = 'Yes'",
           layerDefs = [layerQuery, layerQuery],
           pointTask = new QueryTask(mapServiceURL + '0'),
@@ -166,8 +167,8 @@ require([
                   text: 'PDF/Print',
                   orientation: 'landscape',
                   pageSize: 'LETTER',
-                  title: 'Transportation Improvement Program',
-                  message: 'Updated February 25, 2016',
+                  title: 'Transportation Improvement Program FY 2017-2020',
+                  message: tipVersion,
                   exportOptions: {
                     columns: ':visible'
                   },
