@@ -55,14 +55,14 @@ require([
             },
             {
               name: 'LeadAgency',
-              title: 'Lead Agency',
-              filter: true
+              title: 'Lead Agency'
             },
             {
               name: 'AllAgencies',
               title: 'All Agencies',
               filter: true,
-              multiValue: true
+              multiValue: true,
+              filterTitle: 'Agency'
             },
             {
               name: 'FundType',
@@ -228,7 +228,7 @@ require([
                         .appendTo(filters),
                       label = $('<label></label>')
                         .attr('for', colDef.name)
-                        .text(colDef.title + ':')
+                        .text((colDef.filterTitle ? colDef.filterTitle : colDef.title) + ':')
                         .appendTo(wrapper),
                       select = $('<select></select>')
                         .attr('id', colDef.name)
