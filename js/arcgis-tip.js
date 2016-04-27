@@ -227,7 +227,7 @@ require([
                       var filterString = $.map(filterValues, function(item) {
                         return item.join(' ');
                       }).join('; ');
-                      doc.content[1].text += ' \u2014 ' + filterString;
+                      doc.content[1].text += ' \u2014 Filters Applied: ' + filterString;
                     }
                   }
                 }
