@@ -199,14 +199,35 @@ require([
                     doc.styles.tableBodyEven.fontSize = 8;
                     doc.styles.tableBodyOdd.fontSize = 8;
 
-                    // Content
+                    // Document margins
                     doc.content[0].margin = [0, 0, 0, 6];
+
+                    // Table column widths
                     var colWidths = [];
                     $('#tip-table').dataTable().api().columns(':visible').every(function(idx) {
                       var col = columns[idx];
                       colWidths.push(col.pdfWidth ? col.pdfWidth : 'auto');
                     });
                     doc.content[2].table.widths = colWidths;
+
+                    // Active filters
+                    var filterValues = [];
+                    $('.tip-filter select').each(function() {
+                      var value = $(this).val();
+                      if (value) {
+                        filterValues.push([$(this).prev('label').text(), value]);
+                      }
+                    });
+                    var searchValue = $('#tip-table_filter input[type="search"]').val();
+                    if (searchValue) {
+                      filterValues.push(['Keyword:', searchValue]);
+                    }
+                    if (filterValues.length) {
+                      var filterString = $.map(filterValues, function(item) {
+                        return item.join(' ');
+                      }).join('; ');
+                      doc.content[1].text += ' \u2014 ' + filterString;
+                    }
                   }
                 }
               ],
@@ -226,9 +247,10 @@ require([
                     var column = api.column(colDef.name + ':name'),
                       wrapper = $('<div class="tip-filter"></div>')
                         .appendTo(filters),
+                      filterTitle = colDef.filterTitle ? colDef.filterTitle : colDef.title,
                       label = $('<label></label>')
                         .attr('for', colDef.name)
-                        .text((colDef.filterTitle ? colDef.filterTitle : colDef.title) + ':')
+                        .text(filterTitle + ':')
                         .appendTo(wrapper),
                       select = $('<select></select>')
                         .attr('id', colDef.name)
