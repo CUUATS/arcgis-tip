@@ -19,7 +19,7 @@ require([
           map = new Map("map", {
             center: [-88.2, 40.1],
             zoom: 10,
-            basemap: "topo"
+            basemap: "gray-vector"
           }),
           dmsLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL, {
             "opacity" : 1.0
