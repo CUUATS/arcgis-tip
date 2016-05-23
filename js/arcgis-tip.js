@@ -3,8 +3,9 @@ require([
   "esri/layers/ArcGISDynamicMapServiceLayer",
   "esri/tasks/query",
   "esri/tasks/QueryTask",
+  "esri/dijit/Legend",
   "dojo/domReady!"
-], function(Map, ArcGISDynamicMapServiceLayer, Query, QueryTask) {
+], function(Map, ArcGISDynamicMapServiceLayer, Query, QueryTask, Legend) {
   (function ($) {
     $(function () {
       $('.arcgis-tip').each(function () {
@@ -19,7 +20,7 @@ require([
           map = new Map("map", {
             center: [-88.2, 40.1],
             zoom: 10,
-            basemap: "gray-vector"
+            basemap: "gray"
           }),
           dmsLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL, {
             "opacity" : 1.0
@@ -305,9 +306,14 @@ require([
             }
           };
 
-        // Set up the map.
         dmsLayer.setLayerDefinitions(layerDefs);
         map.addLayer(dmsLayer);
+
+        var legendDijit = new Legend({
+          map: map,
+          layerInfos: [{layer: dmsLayer, title: 'Legend'}]
+        }, 'legend');
+        legendDijit.startup();
 
         // Set up the table.
         query.where = layerQuery;

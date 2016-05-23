@@ -1,6 +1,19 @@
 .arcgis-tip #map {
   height: 400px;
-  width: 100%;
+  width: 80%;
+}
+
+.arcgis-tip #info-pane {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 400px;
+  float: right;
+  overflow-y: scroll;
+  padding: 1em;
+  width: 20%;
+}
+
+.arcgis-tip #legend table {
+  margin-bottom: 0;
 }
 
 #tip-table_wrapper {

@@ -55,6 +55,6 @@ function arcgis_tip_shortcode ( $atts ) {
 			'service' => null,
       'version' => null,
 		), $atts, 'arcgis_tip' );
-  return '<div class="arcgis-tip" data-service="' . esc_attr($atts['service']) . '" data-version="' . esc_attr($atts['version']) . '"><div id="map"></div><table id="tip-table" class="tablepress" width="100%"></table>';
+  return '<div class="arcgis-tip" data-service="' . esc_attr($atts['service']) . '" data-version="' . esc_attr($atts['version']) . '"><div id="info-pane"><div id="legend"></div><div id="feature-attributes"></div></div><div id="map"></div><table id="tip-table" class="tablepress" width="100%"></table>';
 }
 add_shortcode( 'arcgis-tip', 'arcgis_tip_shortcode' );
