@@ -44,7 +44,7 @@ function arcgis_tip_enqueue_scripts () {
   wp_register_script( 'arcgis-js-api', 'https://js.arcgis.com/3.16/', array(), null, false );
 
   wp_register_style( 'arcgis-tip', plugins_url( '/css/arcgis-tip.css' , __FILE__ ), array('jquery-datatables', 'arcgis-js-api'), '0.1', 'all' );
-  wp_register_script( 'arcgis-tip', plugins_url( '/js/arcgis-tip.js' , __FILE__ ), array('jquery-datatables', 'arcgis-js-api'), '0.1', false );
+  wp_register_script( 'arcgis-tip', plugins_url( '/js/arcgis-tip.js' , __FILE__ ), array('jquery-datatables', 'arcgis-js-api'), '0.1-1', false );
 }
 add_action( 'wp_enqueue_scripts', 'arcgis_tip_enqueue_scripts' );
 
