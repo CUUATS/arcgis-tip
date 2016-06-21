@@ -197,15 +197,22 @@ require([
           },
           setCurrentProject = function(projectID, fiscalYear) {
             map.graphics.clear();
+            var extent;
             $.each(getFeatures(projectID, fiscalYear), function(i, feature) {
               if (feature.geometry.type == 'point') {
                 var graphic = new Graphic(feature.geometry, markerSymbol);
               } else {
                 var graphic = new Graphic(feature.geometry, lineSymbol);
               }
-              console.log(graphic);
               map.graphics.add(graphic);
+
+              if (extent) {
+                extent = extent.union(feature.geometry.getExtent());
+              } else {
+                extent = feature.geometry.getExtent();
+              }
             });
+            map.setExtent(extent, true);
           },
           formatCurrency = function(value) {
             if (value !== null) {
