@@ -245,33 +245,40 @@ require([
           columns =  [
             {
               name: 'ProjectID',
+              data: 'attributes.ProjectID',
               title: 'Project ID',
               render: formatFeatureLink
             },
             {
               name: 'FiscalYear',
+              data: 'attributes.FiscalYear',
               title: 'Fiscal Year',
               filter: true
 
             },
             {
               name: 'ProjectTitle',
+              data: 'attributes.ProjectTitle',
               title: 'Project Title'
             },
             {
               name: 'StartTerminus',
+              data: 'attributes.StartTerminus',
               title: 'Start Terminus'
             },
             {
               name: 'EndTerminus',
+              data: 'attributes.EndTerminus',
               title: 'End Terminus'
             },
             {
               name: 'LeadAgency',
+              data: 'attributes.LeadAgency',
               title: 'Lead Agency'
             },
             {
               name: 'AllAgencies',
+              data: 'attributes.AllAgencies',
               title: 'All Agencies',
               filter: true,
               multiValue: true,
@@ -279,10 +286,12 @@ require([
             },
             {
               name: 'FundType',
+              data: 'attributes.FundType',
               title: 'Fund Type'
             },
             {
               name: 'FederalFunding',
+              data: 'attributes.FederalFunding',
               title: 'Federal Funding',
               render: formatCurrency,
               visible: false,
@@ -290,6 +299,7 @@ require([
             },
             {
               name: 'StateFunding',
+              data: 'attributes.StateFunding',
               title: 'State Funding',
               render: formatCurrency,
               visible: false,
@@ -297,6 +307,7 @@ require([
             },
             {
               name: 'LeadAgencyFunding',
+              data: 'attributes.LeadAgencyFunding',
               title: 'Lead Agency Funding',
               render: formatCurrency,
               visible: false,
@@ -304,6 +315,7 @@ require([
             },
             {
               name: 'OtherAgencyFunding',
+              data: 'attributes.OtherAgencyFunding',
               title: 'Other Agency Funding',
               render: formatCurrency,
               visible: false,
@@ -311,34 +323,40 @@ require([
             },
             {
               name: 'TotalCost',
+              data: 'attributes.TotalCost',
               title: 'Total Cost',
               render: formatCurrency,
               pdfWidth: 40
             },
             {
               name: 'Description',
+              data: 'attributes.Description',
               title: 'Description'
             },
             {
               name: 'ProjectCategory',
+              data: 'attributes.ProjectCategory',
               title: 'Project Category',
               visible: false,
               filter: true
             },
             {
               name: 'NonInfrastructure',
+              data: 'attributes.NonInfrastructure',
               title: 'Non-Infrastructure',
               visible: false,
               filter: true
             },
             {
               name: 'MultiAgency',
+              data: 'attributes.MultiAgency',
               title: 'Multi-Agency',
               visible: false,
               filter: true
             },
             {
               name: 'AdvancedConstruction',
+              data: 'attributes.AdvancedConstruction',
               title: 'Advanced Construction',
               visible: false,
               filter: true
@@ -356,16 +374,15 @@ require([
             results.sort();
             return results;
           },
+          makeRowObject = function(feature, layerIndex) {
+            feature._layerIndex = layerIndex;
+            return feature;
+          },
           displayResults = function(featureSets) {
-            console.log('featureSets', featureSets);
             var rows = [];
-            $.each(featureSets, function (i, featureSet) {
+            $.each(featureSets, function (layerIndex, featureSet) {
               $.each(featureSet.features, function (i, feature) {
-                var row = [];
-                $.each(columns, function (i, column) {
-                  row.push(feature.attributes[column.name]);
-                });
-                rows.push(row);
+                rows.push(makeRowObject(feature, layerIndex));
               });
             });
             $('#tip-table').DataTable({
