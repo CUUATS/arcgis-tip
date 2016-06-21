@@ -179,40 +179,30 @@ require([
             $('a.project-link').click(function(e) {
               var params = extractParams($(this).attr('href'));
               setCurrentProject(
-                params.ProjectID,
-                parseInt(params.FiscalYear));
+                api,
+                parseInt(params.id),
+                parseInt(params.layer));
               e.preventDefault();
             });
           },
-          getFeatures = function(projectID, fiscalYear) {
-            var features = [];
-            $.each(featureSets, function(i, featureSet) {
-              $.each(featureSet.features, function(i, feature) {
-                if (feature.attributes.ProjectID == projectID &&
-                    feature.attributes.FiscalYear == fiscalYear)
-                  features.push(feature);
-              });
-            });
-            return features;
-          },
-          setCurrentProject = function(projectID, fiscalYear) {
+          setCurrentProject = function(api, oid, layer) {
             map.graphics.clear();
-            var extent;
-            $.each(getFeatures(projectID, fiscalYear), function(i, feature) {
-              if (feature.geometry.type == 'point') {
-                var graphic = new Graphic(feature.geometry, markerSymbol);
-              } else {
-                var graphic = new Graphic(feature.geometry, lineSymbol);
-              }
-              map.graphics.add(graphic);
-
-              if (extent) {
-                extent = extent.union(feature.geometry.getExtent());
-              } else {
-                extent = feature.geometry.getExtent();
+            $.each(api.data(), function(i, feature) {
+              if (feature.attributes.OBJECTID == oid
+                  && feature._layerIndex == layer) {
+                var symbol = (feature.geometry.type == 'point') ?
+                    markerSymbol : lineSymbol,
+                  graphic = new Graphic(feature.geometry, symbol),
+                  extent = feature.geometry.getExtent();
+                map.graphics.add(graphic);
+                if (extent) {
+                  map.setExtent(extent, true);
+                } else {
+                  map.centerAndZoom(feature.geometry, 14);
+                }
+                return false;
               }
             });
-            map.setExtent(extent, true);
           },
           formatCurrency = function(value) {
             if (value !== null) {
@@ -222,8 +212,8 @@ require([
           },
           formatFeatureLink = function(data, type, row, meta) {
             var params = $.param({
-              ProjectID: data,
-              FiscalYear: row[1]
+              id: row.attributes.OBJECTID,
+              layer: row._layerIndex
             });
             return '<a class="project-link" href="#' + params + '">' + data +
               '</a>';
