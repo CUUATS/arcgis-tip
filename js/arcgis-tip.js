@@ -9,8 +9,9 @@ require([
   "esri/symbols/SimpleMarkerSymbol",
   "esri/symbols/SimpleLineSymbol",
   "dojo/_base/Color",
+  "dojo/promise/all",
   "dojo/domReady!"
-], function(Map, ArcGISDynamicMapServiceLayer, Query, QueryTask, Legend, SpatialReference, Graphic, SimpleMarkerSymbol, SimpleLineSymbol, Color) {
+], function(Map, ArcGISDynamicMapServiceLayer, Query, QueryTask, Legend, SpatialReference, Graphic, SimpleMarkerSymbol, SimpleLineSymbol, Color, all) {
   (function ($) {
     $(function () {
       $('.arcgis-tip').each(function () {
@@ -21,7 +22,6 @@ require([
           pointTask = new QueryTask(mapServiceURL + '0'),
           linearTask = new QueryTask(mapServiceURL + '1'),
           query = new Query(),
-          featureSets = [],
           map = new Map("map", {
             center: [-88.2, 40.1],
             zoom: 10,
@@ -356,8 +356,7 @@ require([
             results.sort();
             return results;
           },
-          displayResults = function() {
-            console.log('map spatialReference', map.spatialReference);
+          displayResults = function(featureSets) {
             console.log('featureSets', featureSets);
             var rows = [];
             $.each(featureSets, function (i, featureSet) {
@@ -382,10 +381,6 @@ require([
                 initProjectSelection(api);
               }
             });
-          },
-          success = function (featureSet) {
-            featureSets.push(featureSet);
-            if (featureSets.length == 2) displayResults();
           };
 
         dmsLayer.setLayerDefinitions(layerDefs);
@@ -402,9 +397,10 @@ require([
         query.returnGeometry = true;
         query.outFields = ['*'];
         query.outSpatialReference = new SpatialReference(3857);
-        // console.log('query outSpatialReference', map.spatialReference);
-        pointTask.execute(query, success);
-        linearTask.execute(query, success);
+
+        all([
+          pointTask.execute(query),
+          linearTask.execute(query)]).then(displayResults);
       });
     });
   })(jQuery);
