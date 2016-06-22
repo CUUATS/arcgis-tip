@@ -198,7 +198,7 @@ require([
                 map.graphics.add(graphic);
                 if (extent) {
                   map.setExtent(extent, true);
-                } else {
+                } else if ($.isNumeric(feature.geometry.x)) {
                   map.centerAndZoom(feature.geometry, 14);
                 }
                 return false;
