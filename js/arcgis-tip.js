@@ -8,16 +8,35 @@ require([
   "esri/graphic",
   "esri/symbols/SimpleMarkerSymbol",
   "esri/symbols/SimpleLineSymbol",
+  "esri/tasks/IdentifyTask",
+  "esri/tasks/IdentifyParameters",
   "dojo/_base/Color",
   "dojo/promise/all",
   "dojo/domReady!"
-], function(Map, ArcGISDynamicMapServiceLayer, Query, QueryTask, Legend, SpatialReference, Graphic, SimpleMarkerSymbol, SimpleLineSymbol, Color, all) {
+], function(
+    Map,
+    ArcGISDynamicMapServiceLayer,
+    Query,
+    QueryTask,
+    Legend,
+    SpatialReference,
+    Graphic,
+    SimpleMarkerSymbol,
+    SimpleLineSymbol,
+    IdentifyTask,
+    IdentifyParameters,
+    Color,
+    all) {
   (function ($) {
     $(function () {
       $('.arcgis-tip').each(function () {
-        var mapServiceURL = $(this).data('service'),
+        var START_FY = 2017,
+          END_FY = 2020,
+          mapServiceURL = $(this).data('service'),
           tipVersion = $(this).data('version'),
-          layerQuery = "(FiscalYear >= 2017 AND FiscalYear <= 2020) OR AdvancedConstruction = 'Yes'",
+          layerQuery = "(FiscalYear >= " + START_FY +
+            " AND FiscalYear <= " + END_FY +
+            ") OR AdvancedConstruction = 'Yes'",
           layerDefs = [layerQuery, layerQuery],
           pointTask = new QueryTask(mapServiceURL + '0'),
           linearTask = new QueryTask(mapServiceURL + '1'),
@@ -27,6 +46,8 @@ require([
             zoom: 10,
             basemap: "gray"
           }),
+          identifyTask = new IdentifyTask(mapServiceURL),
+          identifyParameters = new IdentifyParameters(),
           dmsLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL, {
             "opacity" : 1.0
           }),
@@ -231,6 +252,30 @@ require([
             clearLink.focus();
             $('html, body').scrollTop(infoPane.offset().top);
           },
+          identifyFeature = function(e) {
+            identifyParameters.geometry = e.mapPoint;
+            identifyParameters.mapExtent = map.extent;
+            identifyParameters.width = map.width;
+            identifyParameters.height = map.height;
+
+            identifyTask.execute(identifyParameters).then(function(res) {
+              if (res.length) {
+                var api = $('#tip-table').dataTable().api();
+                $.each(res, function(i, result) {
+                  var attrs = result.feature.attributes,
+                    fy = parseInt(attrs['Fiscal Year']),
+                    ac = attrs['Advanced Construction'] == 'Yes';
+                  // Only display projects that are visible in the
+                  // current TIP.
+                  if ((fy >= START_FY && fy <= END_FY) || ac) {
+                    setCurrentProject(api, attrs.OBJECTID, result.layerId);
+                    return false;
+                  }
+                });
+
+              }
+            });
+          },
           formatCurrency = function(value) {
             if (value !== null) {
               return '$' + value.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
@@ -420,11 +465,19 @@ require([
         dmsLayer.setLayerDefinitions(layerDefs);
         map.addLayer(dmsLayer);
 
+        // Create the legend.
         var legendDijit = new Legend({
           map: map,
           layerInfos: [{layer: dmsLayer, title: 'Legend'}]
         }, 'legend');
         legendDijit.startup();
+
+        // Set up identify feature.
+        identifyParameters.tolerance = 5;
+        identifyParameters.returnGeometry = false;
+        identifyParameters.layerIds = [0, 1];
+        identifyParameters.layerOption = IdentifyParameters.LAYER_OPTION_TOP;
+        map.on('click', identifyFeature);
 
         // Set up the table.
         query.where = layerQuery;
