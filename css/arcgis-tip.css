@@ -16,6 +16,18 @@
   margin-bottom: 0;
 }
 
+.arcgis-tip #feature-attributes {
+  font-size: 0.85em;
+}
+
+.arcgis-tip #feature-attributes h2 {
+  font-size: 1.3em;
+}
+
+.arcgis-tip #feature-attributes dd {
+  margin: 0 0 1em 0;
+}
+
 #tip-table_wrapper {
   margin-top: 1em;
 }

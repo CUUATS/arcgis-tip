@@ -205,18 +205,31 @@ require([
               }
             });
           },
+          clearCurrentProject = function(e) {
+            $('#feature-attributes').hide();
+            $('#legend').show();
+            $('#info-pane').scrollTop(0);
+            map.graphics.clear();
+            e.preventDefault();
+          },
           displayProjectAttributes = function(feature) {
             $('#legend').hide();
-            var container = $('#feature-attributes').empty()
-                .append('<h2>Project Details</h2>'),
+            var container = $('#feature-attributes').empty().show(),
+              infoPane = container.parent(),
+              clearLink = $('<a href="#">&laquo; Clear selection</a>')
+                .click(clearCurrentProject).appendTo(container),
+              title = $('<h2>Project Details</h2>').appendTo(container),
               dl = $('<dl>').appendTo(container);
             $.each(columns, function(i, column) {
               $('<dt>').text(column.title).appendTo(dl);
               var value = feature.attributes[column.name];
               if (column.render && column.name != 'ProjectID')
                 value = column.render(value);
-              $('<dd>').text(value).appendTo(dl);
+              $('<dd>').text(value || '\u2014').appendTo(dl);
             });
+            infoPane.scrollTop(0);
+            clearLink.focus();
+            $('html, body').scrollTop(infoPane.offset().top);
           },
           formatCurrency = function(value) {
             if (value !== null) {
