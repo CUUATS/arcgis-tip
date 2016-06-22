@@ -190,6 +190,7 @@ require([
             $.each(api.data(), function(i, feature) {
               if (feature.attributes.OBJECTID == oid
                   && feature._layerIndex == layer) {
+                displayProjectAttributes(feature);
                 var symbol = (feature.geometry.type == 'point') ?
                     markerSymbol : lineSymbol,
                   graphic = new Graphic(feature.geometry, symbol),
@@ -202,6 +203,19 @@ require([
                 }
                 return false;
               }
+            });
+          },
+          displayProjectAttributes = function(feature) {
+            $('#legend').hide();
+            var container = $('#feature-attributes').empty()
+                .append('<h2>Project Details</h2>'),
+              dl = $('<dl>').appendTo(container);
+            $.each(columns, function(i, column) {
+              $('<dt>').text(column.title).appendTo(dl);
+              var value = feature.attributes[column.name];
+              if (column.render && column.name != 'ProjectID')
+                value = column.render(value);
+              $('<dd>').text(value).appendTo(dl);
             });
           },
           formatCurrency = function(value) {
