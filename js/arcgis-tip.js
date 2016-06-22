@@ -462,6 +462,7 @@ require([
             });
           };
 
+        // Add layers to the map.
         dmsLayer.setLayerDefinitions(layerDefs);
         map.addLayer(dmsLayer);
 
@@ -485,6 +486,7 @@ require([
         query.outFields = ['*'];
         query.outSpatialReference = new SpatialReference(3857);
 
+        // Query the service layers, and populate the table.
         all([
           pointTask.execute(query),
           linearTask.execute(query)]).then(displayResults);
