@@ -4,6 +4,7 @@ require([
   "esri/tasks/query",
   "esri/tasks/QueryTask",
   "esri/dijit/Legend",
+  "esri/geometry/Point",
   "esri/SpatialReference",
   "esri/graphic",
   "esri/symbols/SimpleMarkerSymbol",
@@ -19,6 +20,7 @@ require([
     Query,
     QueryTask,
     Legend,
+    Point,
     SpatialReference,
     Graphic,
     SimpleMarkerSymbol,
@@ -32,6 +34,7 @@ require([
       $('.arcgis-tip').each(function () {
         var START_FY = 2017,
           END_FY = 2020,
+          MARKER_TYPES = ['point', 'multipoint'],
           mapServiceURL = $(this).data('service'),
           tipVersion = $(this).data('version'),
           layerQuery = "(FiscalYear >= " + START_FY +
@@ -212,19 +215,31 @@ require([
               if (feature.attributes.OBJECTID == oid
                   && feature._layerIndex == layer) {
                 displayProjectAttributes(feature);
-                var symbol = (feature.geometry.type == 'point') ?
-                    markerSymbol : lineSymbol,
-                  graphic = new Graphic(feature.geometry, symbol),
-                  extent = feature.geometry.getExtent();
-                map.graphics.add(graphic);
-                if (extent) {
-                  map.setExtent(extent, true);
-                } else if ($.isNumeric(feature.geometry.x)) {
-                  map.centerAndZoom(feature.geometry, 14);
+                if (hasGeometry(feature)) {
+                  var symbol =
+                      (MARKER_TYPES.indexOf(feature.geometry.type) != -1) ?
+                      markerSymbol : lineSymbol,
+                    graphic = new Graphic(feature.geometry, symbol);
+                  map.graphics.add(graphic);
+                  zoomToGeometry(feature.geometry);
                 }
-                return false;
               }
             });
+          },
+          hasGeometry = function(feature) {
+            var geom = feature.geometry;
+            return (geom && !(geom.type == 'point' && !$.isNumeric(geom.x)));
+          },
+          zoomToGeometry = function(geom) {
+            var extent = geom.getExtent();
+            if (extent && extent.xmax != extent.xmin) {
+              map.setExtent(extent, true);
+            } else if (geom.type == 'point') {
+              map.centerAndZoom(geom, 14);
+            } else if (geom.type == 'multipoint') {
+              var point = new Point(geom.points[0], geom.spatialReference);
+              map.centerAndZoom(point, 14);
+            }
           },
           clearCurrentProject = function(e) {
             $('#feature-attributes').hide();
@@ -248,6 +263,9 @@ require([
                 value = column.render(value);
               $('<dd>').text(value || '\u2014').appendTo(dl);
             });
+            if (!hasGeometry(feature))
+              $('<p class="message-info">This project is not mapped.</p>')
+                .insertBefore(dl);
             infoPane.scrollTop(0);
             clearLink.focus();
             $('html, body').scrollTop(infoPane.offset().top);

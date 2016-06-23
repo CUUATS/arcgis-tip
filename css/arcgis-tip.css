@@ -12,6 +12,23 @@
   width: 20%;
 }
 
+.arcgis-tip .message-info {
+  background-color: #dff1f7;
+  border: 1px solid #1595bf;
+  font-size: 0.9em;
+  padding: 0.1em 0.5em;
+}
+
+.arcgis-tip .message-info::before {
+  background-color: #1595bf;
+  color: white;
+  content: "!";
+  display: inline-block;
+  font-weight: bold;
+  margin: -0.1em 0.5em -0.1em -0.5em;
+  padding: 0.1em 0.5em;
+}
+
 .arcgis-tip #legend table {
   margin-bottom: 0;
 }
