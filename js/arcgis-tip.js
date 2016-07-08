@@ -32,13 +32,13 @@ require([
   (function ($) {
     $(function () {
       $('.arcgis-tip').each(function () {
-        var START_FY = 2017,
-          END_FY = 2020,
-          MARKER_TYPES = ['point', 'multipoint'],
+        var MARKER_TYPES = ['point', 'multipoint'],
+          startFY = parseInt($(this).data('start')) || 2017,
+          endFY = parseInt($(this).data('end')) || 2020,
           mapServiceURL = $(this).data('service'),
           tipVersion = $(this).data('version'),
-          layerQuery = "(FiscalYear >= " + START_FY +
-            " AND FiscalYear <= " + END_FY +
+          layerQuery = "(FiscalYear >= " + startFY +
+            " AND FiscalYear <= " + endFY +
             ") OR AdvancedConstruction = 'Yes'",
           layerDefs = [layerQuery, layerQuery],
           pointTask = new QueryTask(mapServiceURL + '0'),
@@ -68,7 +68,7 @@ require([
             esri.symbol.SimpleLineSymbol.STYLE_DASH,
             new dojo.Color([255, 0, 0]),
             3
-          );
+          ),
           customizePDFDoc = function(doc) {
             // Page setup
             doc.pageMargins = [40, 40, 40, 40];
@@ -285,7 +285,7 @@ require([
                     ac = attrs['Advanced Construction'] == 'Yes';
                   // Only display projects that are visible in the
                   // current TIP.
-                  if ((fy >= START_FY && fy <= END_FY) || ac) {
+                  if ((fy >= startFY && fy <= endFY) || ac) {
                     setCurrentProject(api, attrs.OBJECTID, result.layerId);
                     return false;
                   }

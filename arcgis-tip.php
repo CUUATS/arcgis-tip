@@ -54,7 +54,9 @@ function arcgis_tip_shortcode ( $atts ) {
   $atts = shortcode_atts(array(
 			'service' => null,
       'version' => null,
+      'start' => 2017,
+      'end' => 2020,
 		), $atts, 'arcgis_tip' );
-  return '<div class="arcgis-tip" data-service="' . esc_attr($atts['service']) . '" data-version="' . esc_attr($atts['version']) . '"><div id="info-pane"><div id="legend"></div><div id="feature-attributes"></div></div><div id="map"></div><table id="tip-table" class="tablepress" width="100%"></table>';
+  return '<div class="arcgis-tip" data-service="' . esc_attr($atts['service']) . '" data-version="' . esc_attr($atts['version']) . '" data-start="' . esc_attr($atts['start']) . '" data-end="' . esc_attr($atts['end']) . '"><div id="info-pane"><div id="legend"></div><div id="feature-attributes"></div></div><div id="map"></div><table id="tip-table" class="tablepress" width="100%"></table>';
 }
 add_shortcode( 'arcgis-tip', 'arcgis_tip_shortcode' );
