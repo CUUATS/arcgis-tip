@@ -1,12 +1,14 @@
 require([
   "esri/map",
   "esri/layers/ArcGISDynamicMapServiceLayer",
+  "esri/layers/FeatureLayer",
   "esri/tasks/query",
   "esri/tasks/QueryTask",
   "esri/dijit/Legend",
   "esri/geometry/Point",
   "esri/SpatialReference",
   "esri/graphic",
+  "esri/renderers/SimpleRenderer",
   "esri/symbols/SimpleMarkerSymbol",
   "esri/symbols/SimpleLineSymbol",
   "esri/tasks/IdentifyTask",
@@ -17,12 +19,14 @@ require([
 ], function(
     Map,
     ArcGISDynamicMapServiceLayer,
+    FeatureLayer,
     Query,
     QueryTask,
     Legend,
     Point,
     SpatialReference,
     Graphic,
+    SimpleRenderer,
     SimpleMarkerSymbol,
     SimpleLineSymbol,
     IdentifyTask,
@@ -36,6 +40,7 @@ require([
           startFY = parseInt($(this).data('start')) || 2017,
           endFY = parseInt($(this).data('end')) || 2020,
           mapServiceURL = $(this).data('service'),
+          boundaryURL = $(this).data('boundary'),
           tipVersion = $(this).data('version'),
           layerQuery = "(FiscalYear >= " + startFY +
             " AND FiscalYear <= " + endFY +
@@ -54,6 +59,14 @@ require([
           dmsLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL, {
             "opacity" : 1.0
           }),
+          boundaryLayer = new FeatureLayer(boundaryURL, {
+            mode: FeatureLayer.MODE_SNAPSHOT
+          }),
+          boundaryRenderer = new SimpleRenderer(new SimpleLineSymbol(
+            esri.symbol.SimpleLineSymbol.STYLE_SHORTDASHDOT,
+            new dojo.Color([100, 100, 100]),
+            2
+          )),
           markerSymbol = new esri.symbol.SimpleMarkerSymbol(
             esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE,
             12,
@@ -482,12 +495,22 @@ require([
 
         // Add layers to the map.
         dmsLayer.setLayerDefinitions(layerDefs);
-        map.addLayer(dmsLayer);
+        boundaryLayer.setRenderer(boundaryRenderer);
+        map.addLayers([dmsLayer, boundaryLayer]);
 
         // Create the legend.
         var legendDijit = new Legend({
           map: map,
-          layerInfos: [{layer: dmsLayer, title: 'Legend'}]
+          layerInfos: [
+            {
+              layer: boundaryLayer,
+              title: 'Metropolitan Planning Area Boundary'
+            },
+            {
+              layer: dmsLayer,
+              title: 'TIP Projects'
+            }
+          ]
         }, 'legend');
         legendDijit.startup();
 
