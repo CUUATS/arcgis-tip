@@ -40,14 +40,16 @@ require([
           startFY = parseInt($(this).data('start')) || 2017,
           endFY = parseInt($(this).data('end')) || 2020,
           mapServiceURL = $(this).data('service'),
+          taskURL = (mapServiceURL.substr(-1) !== '/') ?
+            mapServiceURL + '/' : mapServiceURL,
           boundaryURL = $(this).data('boundary'),
           tipVersion = $(this).data('version'),
           layerQuery = "(FiscalYear >= " + startFY +
             " AND FiscalYear <= " + endFY +
             ") OR AdvancedConstruction = 'Yes'",
           layerDefs = [layerQuery, layerQuery],
-          pointTask = new QueryTask(mapServiceURL + '0'),
-          linearTask = new QueryTask(mapServiceURL + '1'),
+          pointTask = new QueryTask(taskURL + '0'),
+          linearTask = new QueryTask(taskURL + '1'),
           query = new Query(),
           map = new Map("map", {
             center: [-88.2, 40.1],
