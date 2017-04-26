@@ -329,7 +329,8 @@ require([
               text: 'PDF/Print',
               orientation: 'landscape',
               pageSize: 'LETTER',
-              title: 'Transportation Improvement Program FY 2017-2020',
+              title: 'Transportation Improvement Program FY ' +
+                startFY + '-' + endFY,
               message: tipVersion,
               exportOptions: {
                 columns: ':visible'
