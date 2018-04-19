@@ -78,3 +78,7 @@ div.dt-button-collection {
   border-collapse: collapse;
   box-sizing: border-box;
 }
+
+.tip-updated {
+  font-style: italic;
+}
