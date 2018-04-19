@@ -1,12 +1,14 @@
 .arcgis-tip #map {
-  height: 400px;
+  height: 600px;
+  max-height: 100vh;
   width: 80%;
 }
 
 .arcgis-tip #info-pane {
   border: 1px solid rgba(0, 0, 0, 0.05);
-  height: 400px;
+  height: 600px;
   float: right;
+  max-height: 100vh;
   overflow-y: scroll;
   padding: 1em;
   width: 20%;
@@ -72,17 +74,7 @@ div.dt-button-collection {
   width: 15em;
 }
 
-#tip-table tr td {
-  border-left: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-#tip-table tr td:last-child {
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-}
-
-/* Disable DataTables styles that conflict with Tablepress styles. */
-table.dataTable thead .sorting,
-table.dataTable thead .sorting_asc,
-table.dataTable thead .sorting_desc {
-  background-image: none;
+#tip-table {
+  border-collapse: collapse;
+  box-sizing: border-box;
 }

@@ -482,6 +482,7 @@ require([
               });
             });
             $('#tip-table').DataTable({
+              autoWidth: false,
               dom: 'Bfrtip',
               data: rows,
               paging: false,
